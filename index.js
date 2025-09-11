@@ -1,10 +1,11 @@
 const express = require('express')
+const querystring = require('querystring')
 const path = require('path')
 const fs = require('fs')
-const app = express()
-console.log(app)
 
-//Element
+const app = express()
+
+//HTML Elements
 
 // app.get('/', (req, resp)=>{
 //     resp.send('<h1>Home Page</h1>')
@@ -24,12 +25,57 @@ console.log(app)
 // })
 
 
-//Load Webpage Files
+//HTML pages
 
 const absPath = path.resolve('view')
 const publicPath = path.resolve('public')
 
 app.use(express.static(publicPath))
+
+//ipcheck middleware
+// function ipCheck(req, resp, next) {
+//     const ipAddr = req.socket.remoteAddress;
+// console.log(ipAddr)
+//     if(!ipAddr.includes("192.168.43.149")){
+//         next()
+//     }else{
+//         resp.send('You can not access this page.')
+//     }  
+// }
+
+// app.use(ipCheck)
+
+app.get('/login', (req, resp) => {
+    resp.sendFile(absPath + '/login.html')
+})
+
+// login middleware
+app.use('/submit', (req, resp, next) => {
+
+    const dataBody = []
+    req.on('data', (chunk) => {
+        dataBody.push(chunk)
+    })
+
+    req.on('end', () => {
+        const rawData = Buffer.concat(dataBody).toString();
+        const readableData = querystring.parse(rawData)
+
+        const username = readableData.username;
+        const password = readableData.password;
+
+        if (username.length > 10 && password.length > 5) {
+            req.user = { username }
+            next()
+        } else {
+            resp.redirect('/login')
+        }
+
+    })
+})
+app.post('/submit', (req, resp) => {
+    resp.redirect('/')
+})
 
 app.get('/', (req, resp) => {
     const headerFile = fs.readFileSync(absPath + '/header.html', 'utf-8')

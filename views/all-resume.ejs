@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Resume Directory</title>
+    <link href="/css/style.css" rel="stylesheet" />
+</head>
+
+<body>
+
+    <%- include('partials/header.ejs'); %>
+
+        <section class="card">
+            <h1>Employee Resume Directory</h1>
+            <div class="employee-list">
+
+                <% if(msg){ %>
+                    <p id="flashMsg" class="flash-msg">
+                        <%= msg %>
+                    </p>
+                    <script>
+                        setTimeout(() => {
+                            document.getElementById("flashMsg").style.display = "none"
+                        }, 3000)
+                    </script>
+                    <% } %>
+                        <% if(result.length> 0) { %>
+                            <% result.forEach((emp)=>{ %>
+                                <div class="employee-card">
+                                    <div class="employee-info">
+                                        <h3>
+                                            <%= emp.name %>
+                                        </h3>
+                                        <p>Senior Frontend Developer</p>
+                                    </div>
+                                    <div>
+                                        <a href="/view/<%= emp._id %>"><button class="view-button">View
+                                                Resume</button></a>
+                                        <a href="/remove/<%= emp._id %>"><button
+                                                class="remove-button">Remove</button></a>
+                                    </div>
+                                </div>
+                                <% }) %>
+                                    <% } else { %>
+                                        <div class="centerize-text">
+                                            <p>Resume not available.</p>
+                                            <a href="/add-resume"><button class="view-button">Add Resume</button></a>
+                                        </div>
+                                        <% } %>
+
+            </div>
+            <hr />
+            <!-- Pagination -->
+            <div class="pagination">
+                <% if (currentPage> 1) { %>
+                    <a href="/all-resume?page=<%= currentPage - 1 %>">Previous</a>
+                    <% } %>
+
+                        <% for (let i=1; i <=totalPages; i++) { %>
+                            <a href="/all-resume?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>">
+                                <%= i %>
+                            </a>
+                            <% } %>
+
+                                <% if (currentPage < totalPages) { %>
+                                    <a href="/all-resume?page=<%= currentPage + 1 %>">Next</a>
+                                    <% } %>
+            </div>
+        </section>
+</body>
+
+</html>

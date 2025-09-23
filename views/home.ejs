@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Home</title>
+    <link href="/css/style.css" rel="stylesheet" />
+</head>
+
+<body>
+    <div class="home-container">
+        <div class="card">
+            <% if (msg) { %>
+                <p class="flash-msg">
+                <%= msg %>
+            </p>
+            <% } %>
+
+                <h1>Employee Resume Directory</h1>
+                <div class="btn-group">
+                    <a href="/all-resume" class="btn btn-view">📑 View All Resumes</a>
+                    <a href="/add-resume" class="btn btn-add">➕ Add New Resume</a>
+                </div>
+            </div>
+    </div>
+</body>
+
+</html>

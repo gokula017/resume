@@ -1,124 +1,96 @@
-const express = require('express')
-const querystring = require('querystring')
-const path = require('path')
-const fs = require('fs')
+import express from 'express'
+import { MongoClient, ObjectId } from 'mongodb'
+import 'dotenv/config';
 
-const app = express()
+const app = express();
 
-//HTML Elements
+const dbName = 'employee'
+const local_db_url = process.env.LOCAL_DB_URL;
+const live_db_url = process.env.LIVE_DB_URL;
+const client = new MongoClient(live_db_url)
+const PORT = process.env.PORT || 5000;
 
-// app.get('/', (req, resp)=>{
-//     resp.send('<h1>Home Page</h1>')
-// })
+app.set('view engine', 'ejs')
 
-// //second route will be ignored 
-// // app.get('/', (req, resp) => {
-// //     resp.send('<h1>Hello!!</h1>')
-// // })
-
-// app.get('/about', (req, resp)=>{
-//     resp.send('<h1>About Us</h1>')
-// })
-
-// app.get('/contact', (req, resp)=>{
-//     resp.send('<h1>Contact Us</h1>')
-// })
+app.use(express.static('public'))
+app.use(express.urlencoded({ extended: true }))
+client.connect().then((connection) => {
+    const db = connection.db(dbName)
+    console.log("Database connected");
 
 
-//HTML pages
-
-const absPath = path.resolve('view')
-const publicPath = path.resolve('public')
-
-app.use(express.static(publicPath))
-
-//ipcheck middleware
-// function ipCheck(req, resp, next) {
-//     const ipAddr = req.socket.remoteAddress;
-// console.log(ipAddr)
-//     if(!ipAddr.includes("192.168.43.149")){
-//         next()
-//     }else{
-//         resp.send('You can not access this page.')
-//     }  
-// }
-
-// app.use(ipCheck)
-
-app.get('/login', (req, resp) => {
-    resp.sendFile(absPath + '/login.html')
-})
-
-// login middleware
-app.use('/submit', (req, resp, next) => {
-
-    const dataBody = []
-    req.on('data', (chunk) => {
-        dataBody.push(chunk)
+    //API: view all resume
+    app.get('/api/resume', async (req, resp) => {
+        const result = await db.collection('resume').find().toArray()
+        resp.send(result)
     })
 
-    req.on('end', () => {
-        const rawData = Buffer.concat(dataBody).toString();
-        const readableData = querystring.parse(rawData)
+    //API: view single resume
+    app.get('/api/resume/:id', async (req, resp) => {
+        const result = await db.collection('resume').find({ '_id': new ObjectId(req.params.id) }).toArray()
+        resp.send(result)
+    })
 
-        const username = readableData.username;
-        const password = readableData.password;
 
-        if (username.length > 10 && password.length > 5) {
-            req.user = { username }
-            next()
-        } else {
-            resp.redirect('/login')
+    //UI: Home Page
+    app.get('/', (req, resp) => {
+        resp.render('home', { msg: req.query.msg || null })
+    })
+
+    //UI: view all resume
+    app.get('/all-resume', async (req, resp) => {
+        const page = parseInt(req.query.page) || 1;
+        const limit = 4;
+        const skip = (page - 1) * limit;
+        const totalRecords = await db.collection('resume').countDocuments()
+        const totalPages = Math.ceil(totalRecords / limit);
+
+        const result = await db.collection('resume').find({}).limit(limit).skip(skip).toArray()
+        const msg = decodeURIComponent(req.query.msg) || null
+        resp.render('all-resume', { result, msg, currentPage: page, totalPages })
+    })
+
+    //UI: view single resume
+    app.get('/view/:id', async (req, resp) => {
+        const result = await db.collection('resume').findOne({ '_id': new ObjectId(req.params.id) })
+        if (!result) {
+            return resp.status(404).send('Employee not found')
         }
+        resp.render('view-resume', { result })
+    })
 
+    //UI: Add Resume Details using Form 
+    app.get('/add-resume', (req, resp) => {
+        resp.render('add-resume')
+    })
+
+    //UI: Insert Resume Details to DB 
+    app.post('/submit-resume', async (req, resp) => {
+        try {
+            await db.collection('resume').insertOne(req.body)
+            const encodedMsg= encodeURIComponent("New resume added")
+            resp.redirect(`/all-resume?msg=`)
+        } catch (err) {
+            console.error(err);
+            resp.status(500).send('Error in saving resume')
+        }
+    })
+
+    //UI: Remove resume
+    app.get('/remove/:id', async (req, resp) => {
+        try {
+            const result = await db.collection('resume').deleteOne({ '_id': new ObjectId(req.params.id) })
+            const encodedMsg = encodeURIComponent("Resume removed successfully")
+            resp.redirect(`/all-resume?msg=${encodedMsg}`)
+        } catch (err) {
+            console.log(err)
+            resp.status(500).send('Error in removing resume')
+        }
+    })
+
+    app.listen(PORT, () => {
+        const response =
+            { message: "App is running", status: "success", port: PORT };
+        console.log(response)
     })
 })
-app.post('/submit', (req, resp) => {
-    resp.redirect('/')
-})
-
-app.get('/', (req, resp) => {
-    const headerFile = fs.readFileSync(absPath + '/header.html', 'utf-8')
-    const homeFile = fs.readFileSync(absPath + '/home.html', 'utf-8')
-    const footerFile = fs.readFileSync(absPath + '/footer.html', 'utf-8')
-
-    const homePage = headerFile + homeFile + footerFile;
-
-    resp.send(homePage)
-})
-
-app.get('/about', (req, resp) => {
-    const headerFile = fs.readFileSync(absPath + '/header.html', 'utf-8')
-    const aboutFile = fs.readFileSync(absPath + '/about.html', 'utf-8')
-    const footerFile = fs.readFileSync(absPath + '/footer.html', 'utf-8')
-
-    const aboutPage = headerFile + aboutFile + footerFile;
-
-    resp.send(aboutPage)
-})
-
-app.get('/contact', (req, resp) => {
-    const headerFile = fs.readFileSync(absPath + '/header.html', 'utf-8')
-    const contactFile = fs.readFileSync(absPath + '/contact.html', 'utf-8')
-    const footerFile = fs.readFileSync(absPath + '/footer.html', 'utf-8')
-
-    const contactPage = headerFile + contactFile + footerFile;
-
-    resp.send(contactPage)
-})
-
-app.use((req, resp) => {
-
-    const headerFile = fs.readFileSync(absPath + '/header.html', 'utf-8')
-    const notFoundFile = fs.readFileSync(absPath + '/404.html', 'utf-8')
-    const footerFile = fs.readFileSync(absPath + '/footer.html', 'utf-8')
-
-    const notFoundPage = headerFile + notFoundFile + footerFile;
-
-
-    resp.status(404).send(notFoundPage)
-})
-
-
-app.listen('1219')
-

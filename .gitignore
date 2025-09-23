@@ -21,3 +21,8 @@ build/
 
 # Optional: VSCode settings folder
 .vscode/
+
+
+# My Files
+testConnection.js
+migrate.js

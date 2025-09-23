@@ -1,11 +1,11 @@
 import express from 'express'
-import { MongoClient, ObjectId } from 'mongodb'
 import 'dotenv/config';
+import { MongoClient, ObjectId } from 'mongodb'
 
 const app = express();
 
 const dbName = 'employee'
-const local_db_url = process.env.LOCAL_DB_URL;
+// const local_db_url = process.env.LOCAL_DB_URL;
 const live_db_url = process.env.LIVE_DB_URL;
 const client = new MongoClient(live_db_url)
 const PORT = process.env.PORT || 5000;

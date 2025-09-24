@@ -38,8 +38,11 @@
                                     <div>
                                         <a href="/view/<%= emp._id %>"><button class="view-button">View
                                                 Resume</button></a>
-                                        <a href="/remove/<%= emp._id %>"><button
-                                                class="remove-button">Remove</button></a>
+                                        <a href="/update/<%= emp._id %>"><button class="view-button">Update
+                                            </button></a>
+                                        <button class="remove-button"
+                                            onclick="deleteResume('<%= emp._id %>')">Remove</button>
+
                                     </div>
                                 </div>
                                 <% }) %>
@@ -69,6 +72,22 @@
                                     <% } %>
             </div>
         </section>
+
+        <script>
+            async function deleteResume(id) {
+                if (!confirm("Are you sure you want to remove this resume?")) return;
+
+                const res = await fetch(`/remove/${id}`, { method: 'DELETE' });
+
+                if (res.ok) {
+                    alert("Resume removed successfully");
+                    window.location.href = '/all-resume';
+                } else {
+                    const data = await res.text();
+                    alert("Error: " + data);
+                }
+            }
+        </script>
 </body>
 
 </html>

@@ -26,3 +26,4 @@ build/
 # My Files
 testConnection.js
 migrate.js
+views/test.ejs

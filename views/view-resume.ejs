@@ -10,7 +10,13 @@
 
 <body>
     <%- include('partials/header.ejs'); %>
-        <div class="container view-resume-page">
+        <div class="download-section">
+            
+                <button class="go-back" onclick="window.history.back()"> Go Back</button>
+            
+            <button class="download-btn" id="downloadBtn" onclick="downloadPDF()"> Download Resume</button>
+        </div>
+        <div class="container view-resume-page" id="resumeSection">
             <div class="basic-info">
                 <h1>
                     <%= result.name %>
@@ -23,106 +29,188 @@
                     </a></p>
             </div>
 
-            <section>
-                <h2>Profile Summary</h2>
-                <p>
-                    <%= result.profileSummary %>
-                </p>
-            </section>
+            <% if(result.profileSummary) { %>
+                <section>
+                    <h2>Profile Summary</h2>
+                    <p>
+                        <%= result.profileSummary %>
+                    </p>
+                </section>
+                <% } %>
 
-            <section>
-                <h2>Work Experience</h2>
-                <div class="job">
-                    <h3>Senior Frontend Developer – ABC Tech Pvt Ltd</h3>
-                    <span>Jan 2020 – Present | Bengaluru, India</span>
-                    <ul>
-                        <li>Led the development of responsive React applications for clients in e-commerce and finance.
-                        </li>
-                        <li>Collaborated with backend teams to integrate REST APIs and enhance performance.</li>
-                        <li>Mentored junior developers and conducted code reviews for quality assurance.</li>
-                    </ul>
-                </div>
-                <div class="job">
-                    <h3>UI Developer – XYZ Solutions</h3>
-                    <span>Jun 2016 – Dec 2019 | Mumbai, India</span>
-                    <ul>
-                        <li>Developed pixel-perfect UIs using HTML, CSS, and JavaScript frameworks.</li>
-                        <li>Optimized website performance, reducing load time by 30%.</li>
-                        <li>Worked closely with designers to create immersive and accessible user experiences.</li>
-                    </ul>
-                </div>
-            </section>
+                    <% if(result.experience.length> 0) { %>
+                        <section>
+                            <h2>Work Experience</h2>
+                            <% result.experience.forEach((exp)=>{ %>
 
-            <section>
-                <h2>Education</h2>
-                <div class="edu">
-                    <h3>Bachelor of Technology in Computer Science</h3>
-                    <span>XYZ University | 2012 – 2016</span>
-                </div>
-            </section>
+                                <div class="job">
+                                    <h3>
+                                        <span>
+                                            <%= exp.jobTitle %>
+                                        </span>
+                                        <%if(exp.company) { '–' } %>
+                                            <span>
+                                                <%= exp.company %>
+                                            </span>
+                                    </h3>
+                                    <span>
+                                        <%= exp.duration %>
+                                    </span>
+                                    <% if(exp.description){ %>
+                                        <ul>
+                                            <% exp.description.split('#').forEach((desc)=>{ %>
+                                                <li>
+                                                    <%= desc %>
+                                                </li>
 
-            <section>
-                <h2>Skills</h2>
-                <div class="skills-list">
-                    <% if(result.skills){ result.skills?.split(',').forEach(skill=> { %>
-                        <span>
-                            <%= skill.trim() %>
-                        </span>
-                        <% }) }%>
-                </div>
-            </section>
+                                                <%})%>
+                                        </ul>
+                                        <%}%>
+                                </div>
 
-            <section>
-                <h2>Projects</h2>
+                                <% }) %>
+                        </section>
+                        <% } %>
 
-                <% if(result.projects){result.projects.forEach(project=>{ %>
+                            <% if(result.education.length> 0){ %>
+                                <section>
+                                    <h2>Education</h2>
 
-                    <div class="project">
-                        <h3>
-                            <%= project.name %>
-                        </h3>
-                        <p>
-                            <%= project.description %>
-                        </p>
-                    </div>
+                                    <% result.education.forEach((edu)=>{ %>
+                                        <div class="edu">
+                                            <h3>
+                                                <%= edu.degree %>
+                                            </h3>
+                                            <span>
+                                                <%= edu.institution %>
+                                            </span>
+                                            <% if(edu.year) { %>
+                                                |
+                                                <% } %>
+                                                    <span>
+                                                        <%= edu.year %>
+                                                    </span>
+                                        </div>
+                                        <% }) %>
+                                </section>
+                                <% } %>
 
-                    <% }) } %>
-            </section>
+                                    <% if(result.skills){ %>
+                                        <section>
+                                            <h2>Skills</h2>
+                                            <div class="skills-list">
+                                                <% result.skills?.split(',').forEach(skill=> { %>
+                                                    <span>
+                                                        <%= skill.trim() %>
+                                                    </span>
+                                                    <% }) %>
+                                            </div>
+                                        </section>
+                                        <% } %>
 
+                                            <% if(result.projects){ %>
+                                                <section>
+                                                    <h2>Projects</h2>
 
-            <section>
-                <h2>Certifications</h2>
-                <ul>
-                    <% if(result.certifications){ result.certifications.split(',').forEach(cert=> { %>
-                        <li>
-                            <%= cert.trim() %>
-                        </li>
-                        <% })} %>
-                </ul>
-            </section>
+                                                    <% result.projects.forEach(project=>{ %>
 
-            <section>
-                <h2>Languages</h2>
-                <ul>
-                    <% if(result.languages){result.languages.split(',').forEach(lang=> { %>
-                        <li>
-                            <%= lang.trim() %>
-                        </li>
-                        <% }) } %>
-                </ul>
-            </section>
+                                                        <div class="project">
+                                                            <h3>
+                                                                <%= project.name %>
+                                                            </h3>
+                                                            <p>
+                                                                <%= project.description %>
+                                                            </p>
+                                                        </div>
 
-            <section>
-                <h2>Hobbies</h2>
-                <ul>
-                    <% if(result.hobbies){result.hobbies.split(',').forEach(hobby=> { %>
-                        <li>
-                            <%= hobby.trim() %>
-                        </li>
-                        <% }) }%>
-                </ul>
-            </section>
+                                                        <% }) %>
+                                                </section>
+                                                <% } %>
+
+                                                    <% if(result.certifications){ %>
+                                                        <section>
+
+                                                            <h2 class="justify-between">Certifications
+                                                                <button class="button"
+                                                                    onclick="removeField('<%= result._id %>', 'certifications')">
+                                                                    Remove</button>
+                                                            </h2>
+                                                            <ul>
+                                                                <% result.certifications.split(',').forEach(cert=> { %>
+                                                                    <li>
+                                                                        <%= cert.trim() %>
+                                                                    </li>
+                                                                    <% }) %>
+                                                            </ul>
+                                                        </section>
+                                                        <% } %>
+
+                                                            <% if(result.languages){ %>
+                                                                <section>
+                                                                    <h2 class="justify-between">Languages
+                                                                        <button class="button"
+                                                                            onclick="removeField('<%= result._id %>', 'languages')">
+                                                                            Remove</button>
+                                                                    </h2>
+                                                                    <ul>
+                                                                        <% result.languages.split(',').forEach(lang=> {
+                                                                            %>
+                                                                            <li>
+                                                                                <%= lang.trim() %>
+                                                                            </li>
+                                                                            <% }) %>
+                                                                    </ul>
+                                                                </section>
+                                                                <% } %>
+
+                                                                    <% if(result.hobbies){ %>
+                                                                        <section>
+                                                                            <h2 class="justify-between">Hobbies
+                                                                                <button class="button"
+                                                                                    onclick="removeField('<%= result._id %>', 'hobbies')">
+                                                                                    Remove</button>
+                                                                            </h2>
+                                                                            <ul>
+                                                                                <%
+                                                                                    result.hobbies.split(',').forEach(hobby=>
+                                                                                    {
+                                                                                    %>
+                                                                                    <li>
+                                                                                        <%= hobby.trim() %>
+                                                                                    </li>
+                                                                                    <% }) %>
+                                                                            </ul>
+                                                                        </section>
+                                                                        <% } %>
         </div>
+
+        <script>
+            //Download Resume
+            document.getElementById('downloadBtn').addEventListener('click', function () {
+                window.print()
+            })
+
+            async function removeField(id, field) {
+                if (!confirm(`Are you sure you want to remove ${field}?`)) return;
+
+                const res = await fetch(`/remove/${id}/${field}`, { method: 'DELETE' });
+
+                try {
+                    const data = await res.json(); // try parsing JSON
+
+                    if (res.ok) {
+                        alert(data.message); // success
+                        window.location.reload();
+                    } else {
+                        alert("Error: " + data.message);
+                    }
+                } catch (err) {
+                    console.error(err);
+                    alert("Unexpected error while removing section");
+                }
+            }
+          
+        </script>
 </body>
 
 </html>

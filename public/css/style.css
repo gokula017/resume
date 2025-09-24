@@ -13,6 +13,12 @@
        padding: 0;
    }
 
+   .justify-between {
+       display: flex;
+       justify-content: space-between;
+   }
+
+
    .home-container {
        display: flex;
        justify-content: center;
@@ -128,10 +134,10 @@
        color: #ffd700;
    }
 
-   input,
-   textarea,
-   select,
-   button {
+   .create-resume-page :where(input,
+       textarea,
+       select,
+       button) {
        width: 100%;
        padding: 10px;
        margin-top: 5px;
@@ -211,9 +217,7 @@
        text-align: center;
        margin-bottom: 30px;
        font-size: 2em;
-       /* margin-bottom: 1.5rem;
-       font-size: 24px; */
-       color: var(--darkcerulean);
+       color: var(--lightNavyBlue);
    }
 
    /* === Shared Container === */
@@ -293,7 +297,7 @@
 
    /* Buttons */
    a .view-button,
-   a .remove-button {
+    .remove-button {
        border: none;
        padding: 8px 15px;
        border-radius: 4px;
@@ -310,11 +314,11 @@
        background: var(--darkcerulean);
    }
 
-   a .remove-button {
+    .remove-button {
        background: #ff737d;
    }
 
-   a .remove-button:hover {
+    .remove-button:hover {
        background: #e54853;
    }
 
@@ -364,8 +368,8 @@
        color: #555;
    }
 
-   section {
-       margin-bottom: 25px;
+   .create-resume-page h1 {
+       margin-top: 5px;
    }
 
    .create-resume-page h2 {
@@ -379,6 +383,15 @@
        margin-top: 0;
    }
 
+
+   .view-resume-page .basic-info {
+       margin-bottom: 3rem;
+   }
+
+   .view-resume-page .basic-info h1 {
+       margin: 5px 0;
+   }
+
    .view-resume-page h2 {
        font-size: 1.2em;
        margin-bottom: 10px;
@@ -387,16 +400,23 @@
        text-transform: uppercase;
        letter-spacing: 1px;
        margin-top: 0;
+       color: var(--lightNavyBlue);
    }
 
-   .view-resume-page p {
+   .view-resume-page .basic-info p {
        text-align: center;
+       margin: 0;
    }
+
+   .view-resume-page section {
+       margin-bottom: 40px;
+   }
+
 
    .job,
    .edu,
    .project {
-       margin-bottom: 15px;
+       margin-bottom: 25px;
    }
 
    .job h3,
@@ -425,4 +445,63 @@
        padding: 6px 12px;
        border-radius: 20px;
        font-size: 0.9em;
+   }
+
+   .download-section {
+       text-align: center;
+   }
+
+   .download-section {
+       display: flex;
+       margin: 0 auto;
+       justify-content: space-between;
+       max-width: 950px;
+   }
+
+   .button,
+   .download-btn,
+   .go-back {
+       color: var(--darkcerulean);
+       font-weight: 600;
+       border: none;
+       padding: 10px 20px;
+       border-radius: 4px;
+       cursor: pointer;
+       transition: all 0.3s ease;
+   }
+
+   .button:hover,
+   .download-btn:hover,
+   .go-back:hover {
+       transform: translateY(-2px);
+       box-shadow: 0 2px 4px var(--lightNavyBlue);
+       background-color: var(--iceberg);
+   }
+
+   .button:active,
+   .download-btn:active,
+   .go-back:active {
+       transform: translateY(0);
+       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+   }
+
+   @media print {
+       * {
+           box-shadow: none !important;
+           background-color: white !important;
+       }
+
+       header,
+       .download-section {
+           display: none;
+       }
+
+       #resumeSection {
+           visibility: visible;
+       }
+   }
+
+   @page {
+       margin-top: 20mm;
+       margin-bottom: 20mm;
    }

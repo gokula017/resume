@@ -11,10 +11,13 @@
 <body>
     <%- include('partials/header.ejs'); %>
         <div class="download-section">
-            
-                <button class="go-back" onclick="window.history.back()"> Go Back</button>
-            
-            <button class="download-btn" id="downloadBtn" onclick="downloadPDF()"> Download Resume</button>
+
+            <button class="go-back" onclick="window.history.back()"> Go Back</button>
+            <div>
+
+                <a href="/update/<%= result._id %>"><button class="download-btn" > Update</button></a>
+                <button class="download-btn" id="downloadBtn" onclick="downloadPDF()"> Download</button>
+            </div>
         </div>
         <div class="container view-resume-page" id="resumeSection">
             <div class="basic-info">
@@ -209,7 +212,7 @@
                     alert("Unexpected error while removing section");
                 }
             }
-          
+
         </script>
 </body>
 

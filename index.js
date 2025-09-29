@@ -6,7 +6,7 @@ const app = express();
 
 const dbName = 'employee'
 
-// const db_url = process.env.LOCAL_DB_URL;
+//const db_url = process.env.LOCAL_DB_URL;
 const db_url = process.env.LIVE_DB_URL;
 
 console.log(db_url)
@@ -97,13 +97,15 @@ client.connect().then((connection) => {
     })
 
     //UI: Update resume
-
     app.post('/update-resume/:id', async (req, resp) => {
         const id = new ObjectId(req.params.id)
         try {
             const result = await db.collection('resume').updateOne({ _id: id }, { $set: req.body })
-            if(result){
-                resp.status(200).send('Resume updated')
+            if (result.modifiedCount > 0) {
+                resp.redirect('/all-resume')
+            } else {
+                resp.status(404).send('Resume not found or no changes made')
+
             }
         } catch (err) {
             console.error(err)

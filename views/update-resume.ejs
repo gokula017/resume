@@ -61,8 +61,7 @@
                 <div class="section">
                     <h2>Profile Summary / Career Objective</h2>
                     <textarea name="profileSummary" rows="5"
-                        placeholder="Write a concise summary of your skills, experience, and career objective">
-                    <%= result.profileSummary %></textarea>
+                        placeholder="Write a concise summary of your skills, experience, and career objective"><%= result.profileSummary %></textarea>
                 </div>
                 <!-- Education -->
                 <div class="section" id="education-section">
@@ -129,14 +128,13 @@
                     <h2>Projects</h2>
                     <% if(result.projects){ result.projects.forEach((proj)=>{ %>
                         <div class="project-entry">
-                            <label>Project Name</label>
+                            <label>Project Name</label> 
                             <input type="text" name="projects[0][name]" value="<%= proj.name %>"
                                 placeholder="Portfolio Website">
 
                             <label>Description</label>
                             <textarea name="projects[0][description]" rows="2"
-                                placeholder="Ex. Built a responsive personal portfolio using React.js and Bootstrap, showcasing projects and blogs. Deployed on GitHub Pages.">
-                            <%= proj.description %></textarea>
+                                placeholder="Ex. Built a responsive personal portfolio using React.js and Bootstrap, showcasing projects and blogs. Deployed on GitHub Pages."><%= proj.description %></textarea>
 
                             <label>Technologies Used</label>
                             <input type="text" name="projects[0][technologies]" value="<%= proj.technologies %>"
